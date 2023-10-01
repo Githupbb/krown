@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   
+    <title>Регистрация и вход</title>
+    <link href="https://fonts.googleapis.com/css?family=Montserrat:400,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .container {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        h1 {
+            font-size: 24px;
+            font-weight: bold;
+            color: #1a1a1f; /* Text color changed */
+            transition: color 0.3s ease;
+        }
+
+        form {
+            margin-top: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #1a1a1f; /* Text color changed */
+            transition: color 0.3s ease;
+        }
+
+        input[type="email"],
+        input[type="password"],
+        input[type="text"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            transition: border-color 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: #1a1a1f; /* Button background color changed */
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease, color 0.3s ease;
+        }
+
+        .btn-primary:hover {
+            background-color: #1a1a1f;
+            transform: scale(1);
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.3);
+            color: #fff; /* Text color changed on hover */
+        }
+
+        /* Custom CSS styles here */
+
+    
+        /* Password Warning */
+        .password-warning {
+            font-size: 14px;
+            color: #FF0000;
+            margin-top: 5px; 
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        /* Show Password Warning */
+        .show-warning .password-warning {
+            opacity: 1;
+        }
+
+        /* Hover Animation for Container */
+        .container:hover {
+            transform: scale(1.03);
+        }
+
+        /* Hover Animation for h1 and Labels */
+        .container:hover h1,
+        .container:hover label {
+            color: #1a1a1f; /* Reverting to the text color */
+        }
+
+    
+    </style>
+</head>
+<body>
+    <div class="container">
+
+        <h1>Регистрация и вход</h1>
+        
+        <!-- User Registration Form -->
+<form id="register-form">
+    <label for="email">Email:</label>
+    <input type="email" id="email" name="email" required>
+    <label for="password">Пароль:</label>
+    <input type="password" id="password" name="password" required pattern="^(?=.*\d).{5,}$" title="Пароль должен содержать не менее 5 символов и хотя бы одну цифру.">
+    <button type="submit" class="btn-primary">Зарегистрироваться</button>
+</form>
+
+       <!-- User Login Form -->
+<form id="login-form">
+    <label for="login-email">Email:</label>
+    <input type="email" id="login-email" name="email" required>
+    <label for="login-password">Пароль:</label>
+    <input type="password" id="login-password" name="password" required>
+    <button type="submit" class="btn-primary">Войти</button>
+</form>
+
+<!-- Add this empty div for displaying login error -->
+<div id="login-error" style="color: red;"></div>
+    
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-auth.js"></script>
+
+    <script>
+        const firebaseConfig = {
+        apiKey: "AIzaSyBKedyfVV287yC2E0tt8-x_IKUn3ANHyA0",
+        authDomain: "krown-aba9.firebaseapp.com",
+        projectId: "krown-aba9",
+        storageBucket: "krown-aba9.appspot.com",
+        messagingSenderId: "620349836943",
+        appId: "1:620349836943:web:7b51ca838dd5a4c987eafa"
+    };
+    // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const firestore = firebase.firestore();
+    </script>
+    <script>
+        
+    //форма регистрации
+    registerForm.addEventListener("submit", (e) => {
+        e.preventDefault();
+        const email = document.getElementById("email").value;
+        const password = document.getElementById("password").value;
+
+        // Create a new user with email and password
+        auth.createUserWithEmailAndPassword(email, password)
+            .then((userCredential) => {
+                // User registered successfully
+                const user = userCredential.user;
+                console.log("User registered:", user);
+            })
+            .catch((error) => {
+                // Handle errors during registration
+                console.error("Registration error:", error);
+            });
+    });
+    </script>
+    <script>
+        // Login Form
+        const loginForm = document.getElementById("login-form");
+      
+        loginForm.addEventListener("submit", (e) => {
+          e.preventDefault();
+          const loginEmail = document.getElementById("login-email").value;
+          const loginPassword = document.getElementById("login-password").value;
+          const loginError = document.getElementById("login-error"); // Add this line
+      
+          // Sign in with email and password
+          auth.signInWithEmailAndPassword(loginEmail, loginPassword)
+            .then((userCredential) => {
+              // User logged in successfully
+              const user = userCredential.user;
+              console.log("User logged in:", user);
+            })
+            .catch((error) => {
+              // Handle errors during login
+              console.error("Login error:", error);
+              loginError.textContent = "Invalid email or password"; // Display error message
+            });
+        });
+      </script>
+<script>
+    // Password Warning Logic
+    const passwordInput = document.getElementById("password");
+    const passwordWarning = document.querySelector(".password-warning");
+
+    passwordInput.addEventListener("input", () => {
+        if (passwordInput.value.length < 5 || !/\d/.test(passwordInput.value)) {
+            passwordWarning.classList.add("show-warning");
+        } else {
+            passwordWarning.classList.remove("show-warning");
+        }
+    });
+
+</script>
+</body>
+</html>
